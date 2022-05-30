@@ -2,10 +2,19 @@ package com.company.model;
 
 public class User {
 
+    private int id;
     private String login;
     private String password;
     private String email;
     private Role role;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getLogin() {
         return login;
@@ -47,6 +56,11 @@ public class User {
         private Builder() {
         }
 
+        public Builder setId(int id) {
+            User.this.id = id;
+            return this;
+        }
+
         public Builder setLogin(String firstName) {
             User.this.login = firstName;
             return this;
@@ -66,7 +80,6 @@ public class User {
             User.this.role = role;
             return this;
         }
-
 
         public User build() {
             return User.this;

@@ -13,6 +13,7 @@ public class Traffic {
     private double pricePerKm;
     private double totalPrice;
     private int clientId;
+    private TrafficStatus status;
 
     public int getId() {
         return id;
@@ -86,6 +87,14 @@ public class Traffic {
         this.clientId = clientId;
     }
 
+    public TrafficStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TrafficStatus status) {
+        this.status = status;
+    }
+
     public static Builder newBuilder() {
         return new Traffic().new Builder();
     }
@@ -136,6 +145,11 @@ public class Traffic {
 
         public Builder setClientId(int clientId) {
             Traffic.this.clientId = clientId;
+            return this;
+        }
+
+        public Builder setTrafficStatus(TrafficStatus status) {
+            Traffic.this.status = status;
             return this;
         }
 

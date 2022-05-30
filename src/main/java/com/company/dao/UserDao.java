@@ -10,9 +10,9 @@ import java.util.List;
 
 public class UserDao implements Dao {
 
-    private static final String SQL_ADD_USER = "INSERT INTO testindian.users (login, password, email, role) VALUES (?, ?, ?, ?)";
-    private static final String SQL_GET_USER_BY_LOGIN_PAIR = "SELECT * FROM testIndian.users WHERE login=(?) AND password=(?)";
-    /*private static final String SQL_GET_USER_BY_ID = "SELECT * FROM testIndian.users WHERE id=(?)";*/
+    private static final String SQL_ADD_USER = "INSERT INTO users (login, password, email, role) VALUES (?, ?, ?, ?)";
+    private static final String SQL_GET_USER_BY_LOGIN_PAIR = "SELECT * FROM users WHERE login=(?) AND password=(?)";
+    private static final String SQL_GET_USER_BY_ID = "SELECT * FROM users WHERE id=(?)";
 
     @Override
     public boolean create(Object entity) {
@@ -51,8 +51,7 @@ public class UserDao implements Dao {
 
     @Override
     public Object findEntityById(Object id) {
-        return null;
-        /*User user;
+        User user;
 
         Connection connection = null;
         PreparedStatement pStatement = null;
@@ -60,19 +59,18 @@ public class UserDao implements Dao {
             connection = HikariCPDataSource.getConnection();
             pStatement = connection.prepareStatement(SQL_GET_USER_BY_ID);
 
-            pStatement.setInt(1, id);
+            pStatement.setInt(1, (Integer) id);
             ResultSet resultSet = pStatement.executeQuery();
 
             resultSet.next();
-            int resultId = resultSet.getInt("id");
-            String first_name = resultSet.getString("first_name");
-            String last_name = resultSet.getString("last_name");
-            String login = resultSet.getString("login");
-            String password = resultSet.getString("password");
-            String role = resultSet.getString("role");
 
             // user was found => init him
-            user = new User(resultId, first_name, last_name, login, password, User.ROLE.valueOf(role));
+            user = new User().newBuilder()
+                    .setId(resultSet.getInt("id"))
+                    .setLogin(resultSet.getString("login"))
+                    .setEmail(resultSet.getString("email"))
+                    .setRole(Role.valueOf(resultSet.getString("role")))
+                    .build();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -82,7 +80,7 @@ public class UserDao implements Dao {
             close(connection);
         }
 
-        return user;*/
+        return user;
     }
 
     @Override

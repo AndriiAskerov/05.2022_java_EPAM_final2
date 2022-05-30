@@ -2,6 +2,7 @@ package com.company.dao;
 
 import com.company.connection.HikariCPDataSource;
 import com.company.model.Traffic;
+import com.company.model.TrafficStatus;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,8 +18,9 @@ public class TrafficDao implements Dao {
             "cargo, " +
             "price_per_km, " +
             "total_price, " +
-            "client_id) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            "client_id, " +
+            "status) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_GET_ALL_TRAFFIC = "SELECT * FROM traffic";
     private static final String SQL_GET_TRAFFIC_BY_ID = "SELECT * FROM testIndian.users WHERE login=(?) AND password=(?)";
     private static final String SQL_UPDATE_TRAFFIC = "UPDATE traffic SET " +
@@ -29,7 +31,8 @@ public class TrafficDao implements Dao {
             "cargo=(?), " +
             "price_per_km=(?), " +
             "total_price=(?), " +
-            "client_id=(?) " +
+            "client_id=(?), " +
+            "status=(?) " +
             "WHERE id=(?)";
     private static final String SQL_DELETE_TRAFFIC = "DELETE FROM traffic WHERE id=(?)";
 
@@ -52,6 +55,7 @@ public class TrafficDao implements Dao {
             pStatement.setDouble(6, traffic.getPricePerKm());
             pStatement.setDouble(7, traffic.getTotalPrice());
             pStatement.setDouble(8, traffic.getClientId());
+            pStatement.setString(9, traffic.getStatus().name());
 
             pStatement.execute();
             flag = true; // traffic added successfully
@@ -136,7 +140,8 @@ public class TrafficDao implements Dao {
             pStatement.setDouble(6, newTraffic.getPricePerKm());
             pStatement.setDouble(7, newTraffic.getTotalPrice());
             pStatement.setDouble(8, newTraffic.getClientId());
-            pStatement.setInt(9, newTraffic.getId());
+            pStatement.setString(9, newTraffic.getStatus().name());
+            pStatement.setInt(10, newTraffic.getId());
             pStatement.executeQuery();
 
         } catch (SQLException e) {
@@ -188,6 +193,7 @@ public class TrafficDao implements Dao {
                     .setPricePerKm(resultSet.getDouble("price_per_km"))
                     .setTotalPrice(resultSet.getDouble("total_price"))
                     .setClientId(resultSet.getInt("client_id"))
+                    .setTrafficStatus(TrafficStatus.valueOf(resultSet.getString("status")))
                     .build());
         }
         return trafficList;

@@ -1,4 +1,4 @@
-<%--
+<%@ page import="com.company.model.User" %><%--
   Created by IntelliJ IDEA.
   User: andrew
   Date: 29.05.2022
@@ -41,57 +41,24 @@
     </div>
 
     <%-- Table from FOREACH cycle --%>
-    <%--<table cellpadding="4"
-           cellspacing="1"
-           border="1"
-           width="100%"
-           id="trafficTable" class="table table-striped"
-           style="margin-top:10px;">
+    <table id="trafficTable" class="table table-hover" style="user-select: none;">
         <thead>
         <tr>
-            <th style="width:90px;">Дата (РРРР-ММ-ДД)</th>
-            <th style="width:600px;">Маршрут</th>
-            <th style="width:90px;">Відстань (км)</th>
-            <th style="width:90px;">Вантаж (т)</th>
-            <th style="width:150px;">Підсумкова вартість (грн)</th>
-            <th style="width:100px;">Тариф (грн/км)</th>
-        </tr>
-        </thead>
-        <tbody>
-
-        <jsp:useBean id="trafficList" scope="request" type="java.util.List"/>
-        <c:forEach var="item" items="${trafficList}">
-            <tr>
-                <td style="text-align-lasc: center;">
-                        ${item.date}</td>
-                <td>${item.routeFrom} — ${item.routeTo}</td>
-                <td>${item.distance}</td>
-                <td>${item.cargo}</td>
-                <td>${item.totalPrice}</td>
-                <td>${item.pricePerKm}</td>
-            </tr>
-        </c:forEach>
-        </tbody>
-    </table>--%>
-
-
-    <table id="trafficTable" class="table table-hover" style="user-selecc: none;">
-        <thead>
-        <tr>
-            <th scope="col" style="width:90px;">Номер замовлення</th>
-            <th scope="col" style="width:90px;">Номер замовника</th>
+            <th scope="col" style="width:50px;">Номер замовлення</th>
+            <th scope="col" style="width:50px;">Номер замовника</th>
             <th scope="col" style="width:90px;">Дата (РРРР-ММ-ДД)</th>
             <th scope="col" style="width:600px;">Маршрут</th>
             <th scope="col" style="width:90px;">Відстань (км)</th>
             <th scope="col" style="width:90px;">Вантаж (т)</th>
             <th scope="col" style="width:150px;">Підсумкова вартість (грн)</th>
             <th scope="col" style="width:100px;">Тариф (грн/км)</th>
+            <th scope="col" style="width:100px;">Статус</th>
         </tr>
         </thead>
         <tbody>
         <c:set var="count" value="0" scope="page"/>
         <c:forEach items="${trafficList}" var="item">
-            <tr data-bs-toggle="modal" data-bs-target="#applicationModal${count}" style="cursor: pointer;">
+            <tr data-bs-toggle="modal" data-bs-target="#trafficModal${count}" style="cursor: pointer;">
                 <td>${item.id}</td>
                 <td>${item.clientId}</td>
                 <td>${item.date}</td>
@@ -100,10 +67,11 @@
                 <td>${item.cargo}</td>
                 <td>${item.pricePerKm}</td>
                 <td>${item.totalPrice}</td>
+                <td>${item.status}</td>
             </tr>
 
-            <!-- Modal -->
-            <div class="modal fade" id="applicationModal${count}" tabindex="-1"
+            <!-- Traffic Modal -->
+            <div class="modal fade" id="trafficModal${count}" tabindex="-1"
                  aria-labelledby="exampleModalLabel"
                  aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -117,6 +85,13 @@
                             </div>
                             <div class="modal-body">
                                 <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        Номер замовника:
+                                        <input type="text" name="clientId" value="${item.clientId}" disabled style="width: 70px; border: none; text-align: center;">
+                                            <%--<strong> ( <button type="submit" style="border: none; background: none; text-decoration: underline;">
+                                                профіль
+                                            </button> ) </strong>--%> <%-- TODO implement logic: check out client's profile --%>
+                                    </li>
                                     <li class="list-group-item">
                                         Дата замовлення: <strong>${item.date}</strong>
                                     </li>
@@ -134,6 +109,21 @@
                                     </li>
                                     <li class="list-group-item">
                                         Тариф: <strong>${item.pricePerKm}</strong> грн/км
+                                        <c:if test="${item.status.equals('PENDING')}">
+                                            <input type="number" name="set-price" step="0.10"
+                                                   min="${item.pricePerKm}" value="${item.pricePerKm}">
+                                        </c:if>
+                                    </li>
+                                    <li class="list-group-item">
+                                        Статус: <strong>${item.status}</strong>
+                                        <select name="change-status">
+                                            <c:forTokens items="COMPLETED,PENDING,DECLINED" delims=","
+                                                         var="status">
+                                                <c:if test="${!item.status.equals(status)}">
+                                                    <option>${status}</option>
+                                                </c:if>
+                                            </c:forTokens>
+                                        </select>
                                     </li>
                                 </ul>
                             </div>
@@ -152,12 +142,9 @@
                                    value="${item.totalPrice}">
                             <input type="hidden" name="default-progress"
                                    value="${item.pricePerKm}">
-                            <div class="modal-footer">
-                                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">
-                                    Закрити
-                                </button>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Зберегти</button>
+                            <button type="submit" class="btn btn-primary" style="margin: 0 15px 15px;">
+                                Зберегти
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -171,7 +158,7 @@
 
 <%@ include file="footer.jsp" %>
 
-
+<%-- Table script --%>
 <script>
     $(document).ready(function () {
         $('#trafficTable').dataTable();
