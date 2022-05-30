@@ -13,11 +13,33 @@
 </head>
 <body>
 
+<% if (session.getAttribute("role") != null) {%>
+
 <nav>
     <table class="header">
         <thead>
         <th class="logo">
-            <a class="link" href="home">An_dELLO</a></th>
+            <a class="link" href="index.jsp">An_dELLO</a></th>
+
+        <th class="nav-wrapper_right">
+            <a class="link" href="table">Orders<%--Замовлення--%></a></th>
+
+        <th class="nav-wrapper_right">
+            <a class="link" href="about_us.jsp">About<%--Про нас--%></a></th>
+
+        <th class="nav-wrapper_right">
+            <a class="link" href="logout">Log out<br>(<%= session.getAttribute("login").toString() %>)<%--Вийти--%></a></th>
+        </thead>
+    </table>
+</nav>
+
+<%} else {%>
+
+<nav>
+    <table class="header">
+        <thead>
+        <th class="logo">
+            <a class="link" href="index.jsp">An_dELLO<%--Головна--%></a></th>
 
         <th class="nav-wrapper_right">
             <a class="link" href="table">Orders<%--Замовлення--%></a></th>
@@ -30,6 +52,8 @@
         </thead>
     </table>
 </nav>
+
+<%}%>
 
 </body>
 </html>

@@ -43,15 +43,10 @@ public class LoginServlet extends HttpServlet {
                 // if user is already in the database:
                 User user = userDao.get().getUserByLoginPassword(login, password);
                 session.setAttribute("login", user.getLogin());
+                session.setAttribute("email", user.getEmail());
                 session.setAttribute("role", user.getRole());
 
-                if (user.getRole().equals(Role.MANAGER)) {
-                    // if user has MANAGER privileges:
-                    dispatcher = req.getRequestDispatcher("menu_manager.jsp");
-                } else {
-                    // user has AUTHORIZED privileges:
-                    dispatcher = req.getRequestDispatcher("menu_user.jsp");
-                }
+                dispatcher = req.getRequestDispatcher("index.jsp");
             } else {
                 // there is no such user at the database:
                 req.setAttribute("status", "noSuchUser");

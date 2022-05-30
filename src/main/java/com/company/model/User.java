@@ -7,17 +7,6 @@ public class User {
     private String email;
     private Role role;
 
-    public User(String login, String password, String email, Role role) {
-        this.login = login;
-        this.password = password;
-        this.email = email;
-        this.role = role;
-    }
-
-    public User() {
-        this("NULL", "NULL", "NULL", Role.UNKNOWN);
-    }
-
     public String getLogin() {
         return login;
     }
@@ -48,5 +37,39 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public static Builder newBuilder() {
+        return new User().new Builder();
+    }
+
+    public class Builder {
+        private Builder() {
+        }
+
+        public Builder setLogin(String firstName) {
+            User.this.login = firstName;
+            return this;
+        }
+
+        public Builder setPassword(String password) {
+            User.this.password = password;
+            return this;
+        }
+
+        public Builder setEmail(String email) {
+            User.this.email = email;
+            return this;
+        }
+
+        public Builder setRole(Role role) {
+            User.this.role = role;
+            return this;
+        }
+
+
+        public User build() {
+            return User.this;
+        }
     }
 }

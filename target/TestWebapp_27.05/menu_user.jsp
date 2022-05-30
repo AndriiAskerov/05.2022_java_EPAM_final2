@@ -21,5 +21,27 @@
 
 <%@ include file="footer.jsp" %>
 
+
+<%-- Sweet Alert --%>
+<input type="hidden" id="status" value="<%= request.getAttribute("status")%>">
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" href="alert/dist/sweetalert.css">
+
+<script type="text/javascript">
+
+    var status = document.getElementById("status").value;
+    switch (status) {
+        case "trafficListIsEmpty":
+            swal("Oops!", "The traffic list is empty!", "error");
+            break;
+
+        case "userListIsEmpty":
+            swal("Oops!", "The user list is empty!", "error");
+            break;
+    }
+
+</script>
+
 </body>
 </html>

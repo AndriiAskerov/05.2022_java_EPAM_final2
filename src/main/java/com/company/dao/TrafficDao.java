@@ -7,17 +7,17 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrafficDao implements Dao{
+public class TrafficDao implements Dao {
 
     private static final String SQL_ADD_TRAFFIC = "INSERT INTO testindian.traffic (" +
-            "id," +
             "date, " +
             "route_from, " +
             "route_to, " +
             "distance, " +
             "cargo, " +
             "price_per_km, " +
-            "total_price) " +
+            "total_price, " +
+            "client_id) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_GET_ALL_TRAFFIC = "SELECT * FROM traffic";
     private static final String SQL_GET_TRAFFIC_BY_ID = "SELECT * FROM testIndian.users WHERE login=(?) AND password=(?)";
@@ -28,7 +28,8 @@ public class TrafficDao implements Dao{
             "distance=(?), " +
             "cargo=(?), " +
             "price_per_km=(?), " +
-            "total_price=(?) " +
+            "total_price=(?), " +
+            "client_id=(?) " +
             "WHERE id=(?)";
     private static final String SQL_DELETE_TRAFFIC = "DELETE FROM traffic WHERE id=(?)";
 
@@ -43,14 +44,14 @@ public class TrafficDao implements Dao{
             connection = HikariCPDataSource.getConnection();
             pStatement = connection.prepareStatement(SQL_ADD_TRAFFIC);
 
-            pStatement.setInt(1, traffic.getId());
-            pStatement.setDate(2, traffic.getDate());
-            pStatement.setString(3, traffic.getRouteFrom());
-            pStatement.setString(4, traffic.getRouteTo());
-            pStatement.setInt(5, traffic.getDistance());
-            pStatement.setDouble(6, traffic.getCargo());
-            pStatement.setDouble(7, traffic.getPricePerKm());
-            pStatement.setDouble(8, traffic.getTotalPrice());
+            pStatement.setDate(1, traffic.getDate());
+            pStatement.setString(2, traffic.getRouteFrom());
+            pStatement.setString(3, traffic.getRouteTo());
+            pStatement.setInt(4, traffic.getDistance());
+            pStatement.setDouble(5, traffic.getCargo());
+            pStatement.setDouble(6, traffic.getPricePerKm());
+            pStatement.setDouble(7, traffic.getTotalPrice());
+            pStatement.setDouble(8, traffic.getClientId());
 
             pStatement.execute();
             flag = true; // traffic added successfully
@@ -134,7 +135,8 @@ public class TrafficDao implements Dao{
             pStatement.setDouble(5, newTraffic.getCargo());
             pStatement.setDouble(6, newTraffic.getPricePerKm());
             pStatement.setDouble(7, newTraffic.getTotalPrice());
-            pStatement.setInt(8, newTraffic.getId());
+            pStatement.setDouble(8, newTraffic.getClientId());
+            pStatement.setInt(9, newTraffic.getId());
             pStatement.executeQuery();
 
         } catch (SQLException e) {
@@ -175,17 +177,18 @@ public class TrafficDao implements Dao{
     private List<Traffic> getTrafficListFromResult(ResultSet resultSet) throws SQLException {
         List<Traffic> trafficList = new ArrayList<>();
         while (resultSet.next()) {
-            int id = resultSet.getInt("id");
-            Date date = resultSet.getDate("date");
-            String route_from = resultSet.getString("route_from");
-            String route_to = resultSet.getString("route_to");
-            int distance = resultSet.getInt("distance");
-            double cargo = resultSet.getDouble("cargo");
-            double price_per_km = resultSet.getDouble("price_per_km");
-            double total_price = resultSet.getDouble("total_price");
-
             // user was found => init him
-            trafficList.add(new Traffic(id, date, route_from, route_to, distance, cargo, price_per_km, total_price));
+            trafficList.add(new Traffic().newBuilder()
+                    .setId(resultSet.getInt("id"))
+                    .setDate(resultSet.getDate("date"))
+                    .setRouteFrom(resultSet.getString("route_from"))
+                    .setRouteTo(resultSet.getString("route_to"))
+                    .setDistance(resultSet.getInt("distance"))
+                    .setCargo(resultSet.getDouble("cargo"))
+                    .setPricePerKm(resultSet.getDouble("price_per_km"))
+                    .setTotalPrice(resultSet.getDouble("total_price"))
+                    .setClientId(resultSet.getInt("client_id"))
+                    .build());
         }
         return trafficList;
     }

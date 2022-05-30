@@ -52,7 +52,13 @@ public class RegistrationServlet extends HttpServlet {
 
             if (!userDao.get().isUserExist(login, password)) {
                 // ... user has not been created yet
-                if (userDao.get().create(new User(login, password, email, Role.AUTHORIZED))) {
+                if (userDao.get().create(new User().newBuilder()
+                        .setLogin(login)
+                        .setPassword(password)
+                        .setEmail(email)
+                        .setRole(Role.AUTHORIZED)
+                        .build())
+                ) {
                     // ... user created
                     req.setAttribute("status", "success");
                 } else {

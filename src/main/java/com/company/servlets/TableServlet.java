@@ -1,6 +1,7 @@
 package com.company.servlets;
 
 import com.company.dao.TrafficDao;
+import com.company.dao.UserDao;
 import com.company.model.Role;
 
 import javax.servlet.ServletException;
@@ -21,14 +22,12 @@ public class TableServlet extends HttpServlet {
 
         @SuppressWarnings("unchecked")
         AtomicReference<TrafficDao> trafficDao = (AtomicReference<TrafficDao>) getServletContext().getAttribute("trafficDao");
-
-        @SuppressWarnings("unchecked")
-        List trafficList = (List) trafficDao.get().findAll();
+        List trafficList = trafficDao.get().findAll();
 
         if (trafficList.size() == 0) {
             req.setAttribute("status", "trafficListIsEmpty");
-            // TODO redirect to the seme page + show failed popUP
-            req.getRequestDispatcher("index.jsp").forward(req, resp);
+            // redirect to the home page + show failed popUP
+            req.getRequestDispatcher("home").forward(req, resp);
         } else {
             // trafficList contains data:
             req.setAttribute("trafficList", trafficList);
@@ -38,8 +37,26 @@ public class TableServlet extends HttpServlet {
             } else if (role.equals(Role.AUTHORIZED)) {
                 req.getRequestDispatcher("table.jsp").forward(req, resp);
             } else if (role.equals(Role.MANAGER)) {
-                req.getRequestDispatcher("table_manager.jsp").forward(req, resp);
+                @SuppressWarnings("unchecked")
+                AtomicReference<UserDao> userDao = (AtomicReference<UserDao>) getServletContext().getAttribute("userDao");
+                List userList = trafficDao.get().findAll();
+
+                if (userList.size() == 0) {
+                    req.setAttribute("status", "userListIsEmpty");
+                    // redirect to the home page + show failed popUP
+                    req.getRequestDispatcher("home").forward(req, resp);
+                } else {
+                    // userList contains data:
+                    req.setAttribute("userList", userList);
+
+                    req.getRequestDispatcher("table_manager.jsp").forward(req, resp);
+                }
             }
         }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        this.doGet(req, resp);
     }
 }

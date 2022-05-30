@@ -12,25 +12,7 @@ public class Traffic {
     private double cargo;
     private double pricePerKm;
     private double totalPrice;
-
-    public Traffic(int id, Date date, String routeFrom, String routeTo, int distance, double cargo, double pricePerKm, double totalPrice) {
-        this.id = id;
-        this.date = date;
-        this.routeFrom = routeFrom;
-        this.routeTo = routeTo;
-        this.distance = distance;
-        this.cargo = cargo;
-        this.pricePerKm = pricePerKm;
-        this.totalPrice = totalPrice;
-    }
-
-    public Traffic(int id, Date date, String routeFrom, String routeTo, int distance, double cargo, double pricePerKm) {
-        this(id, date, routeFrom, routeTo, distance, cargo, pricePerKm, (Math.ceil((double) distance * pricePerKm)));
-    }
-
-    public Traffic() {
-        this(-1, Date.valueOf("1000-01-01"), "NULL", "NULL", 0, 0.00, 0.00, 0.00);
-    }
+    private int clientId;
 
     public int getId() {
         return id;
@@ -94,5 +76,71 @@ public class Traffic {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public int getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
+    }
+
+    public static Builder newBuilder() {
+        return new Traffic().new Builder();
+    }
+
+    public class Builder {
+        private Builder() {
+        }
+
+        public Builder setId(int id) {
+            Traffic.this.id = id;
+            return this;
+        }
+
+        public Builder setDate(Date date) {
+            Traffic.this.date = date;
+            return this;
+        }
+
+        public Builder setRouteFrom(String routeFrom) {
+            Traffic.this.routeFrom = routeFrom;
+            return this;
+        }
+
+        public Builder setRouteTo(String routeTo) {
+            Traffic.this.routeTo = routeTo;
+            return this;
+        }
+
+        public Builder setDistance(int distance) {
+            Traffic.this.distance = distance;
+            return this;
+        }
+
+        public Builder setCargo(double cargo) {
+            Traffic.this.cargo = cargo;
+            return this;
+        }
+
+        public Builder setPricePerKm(double pricePerKm) {
+            Traffic.this.pricePerKm = pricePerKm;
+            return this;
+        }
+
+        public Builder setTotalPrice(double totalPrice) {
+            Traffic.this.totalPrice = totalPrice;
+            return this;
+        }
+
+        public Builder setClientId(int clientId) {
+            Traffic.this.clientId = clientId;
+            return this;
+        }
+
+        public Traffic build() {
+            return Traffic.this;
+        }
     }
 }

@@ -137,11 +137,13 @@ public class UserDao implements Dao {
             ResultSet resultSet = pStatement.executeQuery();
 
             resultSet.next();
-            String email = resultSet.getString("email");
-            String role = resultSet.getString("role");
-
             // user was found => init him
-            user = new User(login, password, email, Role.valueOf(role));
+            user = new User().newBuilder()
+                    .setLogin(resultSet.getString("login"))
+                    .setPassword(resultSet.getString("password"))
+                    .setEmail(resultSet.getString("email"))
+                    .setRole(Role.valueOf(resultSet.getString("role")))
+                    .build();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -155,16 +157,16 @@ public class UserDao implements Dao {
     }
 
     private List<User> getListOfUsersFromResult(ResultSet resultSet) throws SQLException {
-        List<User> users = new ArrayList<>();
+        List<User> userList = new ArrayList<>();
         while (resultSet.next()) {
-            String login = resultSet.getString("login");
-            String password = resultSet.getString("password");
-            String email = resultSet.getString("email");
-            String role = resultSet.getString("role");
-
-            // user was found => init him
-            users.add(new User(login, password, email, Role.valueOf(role)));
+            // user was found => init him;
+            userList.add(new User().newBuilder()
+                    .setLogin(resultSet.getString("login"))
+                    .setPassword(resultSet.getString("password"))
+                    .setEmail(resultSet.getString("email"))
+                    .setRole(Role.valueOf(resultSet.getString("role")))
+                    .build());
         }
-        return users;
+        return userList;
     }
 }

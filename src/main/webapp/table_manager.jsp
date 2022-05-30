@@ -6,160 +6,175 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page isELIgnored="false" %>
+
 <html>
 <head>
 
     <title>All applications</title>
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <link rel="stylesheet"
           href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
     <script type="text/javascript"
             src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+
 </head>
 <body>
-<%@include file="navbar.jsp" %>
-<h2 class="text-center">${head}</h2>
-<jsp:useBean id="applicationList" scope="request" type="java.util.List"/>
-<jsp:useBean id="u" scope="request" type="org.example.models.User"/>
-<jsp:useBean id="emails" scope="request" type="java.util.List"/>
-<c:choose>
-    <c:when test="${empty applicationList}">
-        <span>${error}</span>
-    </c:when>
-    <c:otherwise>
-        <table id="applicationTable" class="table table-hover" style="user-select: none;">
-            <thead>
+
+<%@ include file="header.jsp" %>
+
+
+<div class="body-content" style="text-align: center;">
+    <h1 class="title-main">Останні замовлення на перевезення Україна — Україна</h1>
+    <div style="margin-bottom: 20px;">
+        (вартість перевезення, розцінки - короткий огляд останніх замовлень)
+    </div>
+
+    <%-- Table from FOREACH cycle --%>
+    <%--<table cellpadding="4"
+           cellspacing="1"
+           border="1"
+           width="100%"
+           id="trafficTable" class="table table-striped"
+           style="margin-top:10px;">
+        <thead>
+        <tr>
+            <th style="width:90px;">Дата (РРРР-ММ-ДД)</th>
+            <th style="width:600px;">Маршрут</th>
+            <th style="width:90px;">Відстань (км)</th>
+            <th style="width:90px;">Вантаж (т)</th>
+            <th style="width:150px;">Підсумкова вартість (грн)</th>
+            <th style="width:100px;">Тариф (грн/км)</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <jsp:useBean id="trafficList" scope="request" type="java.util.List"/>
+        <c:forEach var="item" items="${trafficList}">
             <tr>
-                <th scope="col">${id}</th>
-                <th scope="col">${email}</th>
-                <th scope="col">${text}</th>
-                <th scope="col">${date}</th>
-                <th scope="col">${serviceman}</th>
-                <th scope="col">${price}</th>
-                <th scope="col">${paument_status}</th>
-                <th scope="col">${progress}</th>
-                <th scope="col">${response}</th>
+                <td style="text-align-lasc: center;">
+                        ${item.date}</td>
+                <td>${item.routeFrom} — ${item.routeTo}</td>
+                <td>${item.distance}</td>
+                <td>${item.cargo}</td>
+                <td>${item.totalPrice}</td>
+                <td>${item.pricePerKm}</td>
             </tr>
-            </thead>
-            <tbody>
-            <c:set var="count" value="0" scope="page"/>
-            <c:forEach items="${applicationList}" var="item">
-                <tr data-bs-toggle="modal" data-bs-target="#applicationModal${count}" style="cursor: pointer;">
-                    <td>${item.getApplicationId()}</td>
-                    <td>${item.getEmail()}</td>
-                    <td>${item.getText()}</td>
-                    <td>${item.getDate()}</td>
-                    <td>${item.getServicemanEmail()}</td>
-                    <td>${item.getPrice()}</td>
-                    <td>${item.getPaymentStatus()}</td>
-                    <td>${item.getProgress()}</td>
-                    <td>${item.getResponseText()}</td>
-                </tr>
+        </c:forEach>
+        </tbody>
+    </table>--%>
 
 
-                <!-- Modal -->
-                <div class="modal fade" id="applicationModal${count}" tabindex="-1" aria-labelledby="exampleModalLabel"
-                     aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <form action="allApplications" method="post"> <%----%>
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">
-                                            ${modal_head} ${item.getApplicationId()}</h5>
-                                    <button type="reset" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item">
-                                                ${text}: ${item.getText()}
-                                        </li>
-                                        <li class="list-group-item">
-                                                ${price}: ${item.getPrice()}
-                                            <c:if test="${u.getRole() == Role.MANAGER && item.getPrice() == 0.0}">
-                                                <c:if test="${!item.getPaymentStatus().equals('Paid')}">
-                                                    <input type="number" name="set-price" step="0.01"
-                                                           min="${item.getPrice()}" value="${item.getPrice()}">
-                                                </c:if>
-                                            </c:if>
-                                        </li>
-                                        <li class="list-group-item">
-                                                ${paument_status}: ${item.getPaymentStatus()}
-                                            <c:if test="${u.getRole() == Role.MANAGER}">
-                                                <select name="change-payment-status">
-                                                    <option>${item.getPaymentStatus()}</option>
-                                                    <c:forTokens items="Payment expected,Canceled" delims=","
-                                                                 var="stat">
-                                                        <c:if test="${!item.getPaymentStatus().equals(stat)}">
-                                                            <option>${stat}</option>
-                                                        </c:if>
-                                                    </c:forTokens>
-                                                </select>
-                                            </c:if>
-                                        </li>
-                                        <li class="list-group-item">
-                                                ${serviceman}: ${item.getServicemanEmail()}
-                                            <c:choose>
-                                                <c:when test="${u.getRole() == Role.MANAGER && item.getPaymentStatus().equals('Paid') && !item.getProgress().equals('Done')}">
-                                                    <select name="change-serviceman">
-                                                        <option>${item.getServicemanEmail()}</option>
-                                                        <c:forEach items="${emails}" var="em">
-                                                            <c:if test="${!item.getServicemanEmail().equals(em)}">
-                                                                <option>${em}</option>
-                                                            </c:if>
-                                                        </c:forEach>
-                                                    </select>
-                                                </c:when>
-                                                <c:when test="${item.getServicemanEmail().equals('None') && item.getPrice() != 0.0 && item.getPaymentStatus().equals('Paid')}">
-                                                    <input type="submit" name="take-application" value="Take application">
-                                                </c:when>
-                                            </c:choose>
-                                        </li>
-                                        <li class="list-group-item">
-                                                ${progress}: ${item.getProgress()}
-                                            <c:if test="${u.getEmail().equals(item.getServicemanEmail())}">
-                                                <select name="change-progress">
-                                                    <option>${item.getProgress()}</option>
-                                                    <c:forTokens items="Not started,At work,Done" delims="," var="prog">
-                                                        <c:if test="${!item.getProgress().equals(prog)}">
-                                                            <option>${prog}</option>
-                                                        </c:if>
-                                                    </c:forTokens>
-                                                </select>
-                                            </c:if>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="modal-footer">
-                                    <input type="hidden" name="id" value="${item.getApplicationId()}">
-                                    <input type="hidden" name="default-price" value="${item.getPrice()}">
-                                    <input type="hidden" name="default-email" value="${item.getServicemanEmail()}">
-                                    <input type="hidden" name="default-payment-status" value="${item.getPaymentStatus()}">
-                                    <input type="hidden" name="default-progress" value="${item.getProgress()}">
+    <table id="trafficTable" class="table table-hover" style="user-selecc: none;">
+        <thead>
+        <tr>
+            <th scope="col" style="width:90px;">Номер замовлення</th>
+            <th scope="col" style="width:90px;">Номер замовника</th>
+            <th scope="col" style="width:90px;">Дата (РРРР-ММ-ДД)</th>
+            <th scope="col" style="width:600px;">Маршрут</th>
+            <th scope="col" style="width:90px;">Відстань (км)</th>
+            <th scope="col" style="width:90px;">Вантаж (т)</th>
+            <th scope="col" style="width:150px;">Підсумкова вартість (грн)</th>
+            <th scope="col" style="width:100px;">Тариф (грн/км)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:set var="count" value="0" scope="page"/>
+        <c:forEach items="${trafficList}" var="item">
+            <tr data-bs-toggle="modal" data-bs-target="#applicationModal${count}" style="cursor: pointer;">
+                <td>${item.id}</td>
+                <td>${item.clientId}</td>
+                <td>${item.date}</td>
+                <td>${item.routeFrom} - ${item.routeTo}</td>
+                <td>${item.distance}</td>
+                <td>${item.cargo}</td>
+                <td>${item.pricePerKm}</td>
+                <td>${item.totalPrice}</td>
+            </tr>
 
-                                    <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">${modal_close}
-                                    </button>
-                                    <c:if test="${u.getRole() == Role.MANAGER
-                                    || (item.getServicemanEmail().equals('None') && item.getPaymentStatus().equals('Paid'))
-                                    || item.getServicemanEmail().equals(u.getEmail())}">
-                                        <button type="submit" class="btn btn-primary">${modal_save}</button>
-                                    </c:if>
-                                </div>
-                            </form>
-                        </div>
+            <!-- Modal -->
+            <div class="modal fade" id="applicationModal${count}" tabindex="-1"
+                 aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form action="table" method="post"> <%----%>
+                            <div class="modal-header" style="text-align: center">
+                                <h5 class="modal-title" id="exampleModalLabel">
+                                    Номер замовлення: <strong>${item.id}</strong></h5>
+                                <button type="reset" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        Дата замовлення: <strong>${item.date}</strong>
+                                    </li>
+                                    <li class="list-group-item">
+                                        Маршрут: <strong>${item.routeFrom} - ${item.routeTo}</strong>
+                                    </li>
+                                    <li class="list-group-item">
+                                        Відстань: <strong>${item.distance}</strong> км
+                                    </li>
+                                    <li class="list-group-item">
+                                        Вага вантажу: <strong>${item.cargo}</strong> т
+                                    </li>
+                                    <li class="list-group-item">
+                                        Підсумкова вартість: <strong>${item.totalPrice}</strong> грн
+                                    </li>
+                                    <li class="list-group-item">
+                                        Тариф: <strong>${item.pricePerKm}</strong> грн/км
+                                    </li>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="id" value="${item.id}">
+                            <input type="hidden" name="default-price"
+                                   value="${item.date}">
+                            <input type="hidden" name="default-email"
+                                   value="${item.routeFrom}">
+                            <input type="hidden" name="default-payment-status"
+                                   value="${item.routeTo}">
+                            <input type="hidden" name="default-progress"
+                                   value="${item.distance}">
+                            <input type="hidden" name="default-progress"
+                                   value="${item.cargo}">
+                            <input type="hidden" name="default-progress"
+                                   value="${item.totalPrice}">
+                            <input type="hidden" name="default-progress"
+                                   value="${item.pricePerKm}">
+                            <div class="modal-footer">
+                                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    Закрити
+                                </button>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Зберегти</button>
+                        </form>
                     </div>
                 </div>
-                <c:set var="count" value="${count + 1}" scope="page"/>
-            </c:forEach>
-            </tbody>
-        </table>
-    </c:otherwise>
-</c:choose>
-<my:footer/>
+            </div>
+            <c:set var="count" value="${count + 1}" scope="page"/>
+        </c:forEach>
+        </tbody>
+    </table>
+</div>
+
+
+<%@ include file="footer.jsp" %>
+
 
 <script>
     $(document).ready(function () {
-        $('#applicationTable').dataTable();
+        $('#trafficTable').dataTable();
     });
 </script>
 

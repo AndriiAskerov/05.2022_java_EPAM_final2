@@ -22,16 +22,7 @@ public class HomeServlet extends HttpServlet {
         Role role = (Role) session.getAttribute("role");
         RequestDispatcher dispatcher;
 
-        if (role == null) {
-            dispatcher = req.getRequestDispatcher("index.jsp");
-            dispatcher.forward(req, resp);
-        }
-        if (role.equals(Role.MANAGER)) {
-            dispatcher = req.getRequestDispatcher("menu_manager.jsp");
-            dispatcher.forward(req, resp);
-        } else if (role.equals(Role.AUTHORIZED)) {
-            dispatcher = req.getRequestDispatcher("menu_user.jsp");
-            dispatcher.forward(req, resp);
-        }
+        dispatcher = req.getRequestDispatcher("index.jsp");
+        dispatcher.forward(req, resp);
     }
 }
