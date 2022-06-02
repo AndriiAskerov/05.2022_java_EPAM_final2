@@ -24,6 +24,24 @@ public enum InputPatterns {
         public String getPattern() {
             return "^\\d{2,4}\\.\\d{1,2}$";
         }
+    },
+    date {
+        @Override
+        public String getPattern() {
+            return "^[0-9]{4}-(0[1-9]|1[0-2])-(3[01]|[12][0-9]|0[1-9])$";
+        }
+    },
+    city {
+        @Override
+        public String getPattern() {
+            return "([A-Z][a-z]{3,30}|[(А-Я|І|Ї)][(а-я|і|ї)]{2,29})";
+        }
+    },
+    cargo {
+        @Override
+        public String getPattern() {
+            return "^\\d{1,2}(|\\.[0-9])$";
+        }
     };
 
     public abstract String getPattern();

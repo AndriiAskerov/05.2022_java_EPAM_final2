@@ -1,5 +1,3 @@
-<%@ taglib prefix="t" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page isELIgnored="false" %>
 <%--
   Created by IntelliJ IDEA.
   User: andrew
@@ -8,6 +6,9 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="t" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page isELIgnored="false" %>
+
 <html>
 <head>
     <title>table</title>
@@ -30,6 +31,14 @@
 
 <div class="body-content" style="text-align: center;">
 
+    <% if (session.getAttribute("role") != null) {
+        if (session.getAttribute("role") == Role.AUTHORIZED) {%>
+    <%@ include file="table_user-orders.jsp" %>
+    <%
+            }
+        }
+    %>
+
     <h1 class="title-main">Останні замовлення на перевезення Україна — Україна</h1>
     <div style="margin-bottom: 20px;">
         (вартість перевезення, розцінки - короткий огляд останніх замовлень)
@@ -38,11 +47,10 @@
     <%-- Table from FOREACH cycle --%>
     <table cellpadding="4"
            cellspacing="1"
-           border="1"
            width="100%"
-           id="myTable" class="table table-striped"
-           style="margin-top:10px;">
-        <thead>
+           id="myTable" class="table table-hover table-striped"
+           style="margin-top:10px; user-select: none;">
+        <thead style="text-align: center; vertical-align: middle;">
         <tr>
             <th style="width:90px;">Дата (РРРР-ММ-ДД)</th>
             <th style="width:600px;">Маршрут</th>

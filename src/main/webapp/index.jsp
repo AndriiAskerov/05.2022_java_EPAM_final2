@@ -7,10 +7,29 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="t" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page isELIgnored="false" %>
 
 <html>
+
+<fmt:bundle basename="i18n_ua">
+    <fmt:message key="index.head.title" var="i_h_title"/>
+    <fmt:message key="index.body.title" var="i_b_title"/>
+    <fmt:message key="index.body.shortInfo.title" var="i_b_sI_title"/>
+    <fmt:message key="index.body.shortInfo.text" var="i_b_sI_text"/>
+    <fmt:message key="index.body.shortInfo.unknown.title" var="i_b_sI_unk_title"/>
+    <fmt:message key="index.body.shortInfo.unknown.text1" var="i_b_sI_unk_text1"/>
+    <fmt:message key="index.body.shortInfo.unknown.text2" var="i_b_sI_unk_text2"/>
+    <fmt:message key="index.body.shortInfo.auth.title" var="i_b_sI_auth_title"/>
+    <fmt:message key="index.body.shortInfo.auth.text1" var="i_b_sI_auth_text1"/>
+    <fmt:message key="index.body.shortInfo.auth.text2" var="i_b_sI_auth_text2"/>
+    <fmt:message key="index.body.shortInfo.auth.text3" var="i_b_sI_auth_text3"/>
+    <fmt:message key="index.body.slogan.main" var="i_b_slogan_main"/>
+    <fmt:message key="index.body.slogan.emphasised" var="i_b_slogan_emphasised"/>
+</fmt:bundle>
+
 <head>
-    <title>index</title>
+    <title>${h_title}</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -21,51 +40,50 @@
 <% if (session.getAttribute("role") == null) {%>
 <%--session is new or invalidated (unknown user)--%>
 <div class="body-content" style="text-align: center;">
-    <h1 class="title-main">Hello unknown user!</h1>
+    <h1 class="title-main">${i_b_title}</h1>
     <hr>
+    <h3 style="text-align: center; margin: 20px 0;">
+        ${i_b_sI_title}</h3>
+    <div style="margin: 5px auto">
+        ${i_b_sI_text}
+    </div>
     <table style="width: 100%; padding: 20px 0;">
-        <thead>
+        <tbody>
         <tr>
-            <th>
-                <h3 style="text-align: center; margin: 20px 0;">
-                    Short info:</h3>
-            </th>
-        </tr>
-        </thead>
-        <tbody style="text-align: center;">
-        <tr>
-            <td style="padding: 5px 10px">
-                An_dELLO - це зручний інформаційний сервіс!
-                <br>
-                <div style="width: 40%; margin: auto; text-align: left; padding: 20px 0;">
-                    <h4 style="text-align: center; padding: 8px 0">Можливості користувача:</h4>
-                    <ul>
-                        <li><a href="calculate.jsp">Обчислювати вартість сервісу</a></li>
-                        <li><a href="table">Продивитись останні замовлення</a></li>
-                    </ul>
-                    <div style="padding: 10px 0 20px 0">
-                        <hr>
+            <td style="width: 50%; padding: 20px 40px; border-right: 1px solid;">
+                <div>
+                    <div style="text-align: center;">
+                        <h4 style="padding: 8px 0">${i_b_sI_unk_title}</h4>
+
+                    </div>
+                    <div style="width: 380px; margin: 0 auto;">
+                        <a href="calculate.jsp">${i_b_sI_unk_text1}</a><br>
+                        <a href="table">${i_b_sI_unk_text2}</a><br>
                     </div>
                 </div>
-                <div style="width: 40%; margin: auto; text-align: left; padding: 20px 0;">
-                    <h4 style="text-align: center; padding: 8px 0">Можливості авторизаваного <br> користувача:</h4>
-                    <ul>
-                        <li><a href="calculate.jsp">Обчислювати вартість сервісу</a></li>
-                        <li><a href="table">Продивитись останні замовлення</a></li>
-                        <li><a href="login.jsp">Подати заявку на замовлення</a></li>
-                    </ul>
-                    <div style="padding: 10px 0 20px 0">
-                        <hr>
+            </td>
+            <td style="width: 50%; padding: 20px 40px;">
+                <div>
+                    <div style="text-align: center;">
+                        <h4 style="padding: 8px 0">${i_b_sI_unk_title}:</h4>
+
+                    </div>
+                    <div style="width: 380px; margin: 0 auto;">
+                        <a href="calculate.jsp">${i_b_sI_unk_text1}</a><br>
+                        <a href="table">${i_b_sI_unk_text2}</a><br>
+                        <a href="login.jsp">${i_b_sI_unk_text3}</a><br>
                     </div>
                 </div>
-                <br>
-                Основний пріоритет у нашій роботі — <strong>актуальність інформації</strong>.
-                <br>
-                <br>
             </td>
         </tr>
         </tbody>
     </table>
+    <div style="padding: 10px 0 20px 0">
+        <hr>
+    </div>
+    <div style="padding: 25px 10px 0">
+        ${i_b_slogan_main}<strong>${i_b_slogan_emphasised}</strong>
+    </div>
 </div>
 <%
 } else { // session is registered:

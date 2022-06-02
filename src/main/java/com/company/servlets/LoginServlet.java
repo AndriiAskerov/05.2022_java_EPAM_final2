@@ -28,11 +28,13 @@ public class LoginServlet extends HttpServlet {
             req.setAttribute("status", "invalidLogin");
             dispatcher = req.getRequestDispatcher("login.jsp");
             dispatcher.forward(req, resp);
+            return;
         }
         if (!Pattern.matches(InputPatterns.password.getPattern(), password)) {
             req.setAttribute("status", "invalidPassword");
             dispatcher = req.getRequestDispatcher("login.jsp");
             dispatcher.forward(req, resp);
+            return;
         }
 
         @SuppressWarnings("unchecked")
@@ -42,7 +44,9 @@ public class LoginServlet extends HttpServlet {
             if (userDao.get().isUserExist(login, password)) {
                 // if user is already in the database:
                 User user = userDao.get().getUserByLoginPassword(login, password);
+                session.setAttribute("id", user.getId());
                 session.setAttribute("login", user.getLogin());
+                session.setAttribute("password", user.getPassword());
                 session.setAttribute("email", user.getEmail());
                 session.setAttribute("role", user.getRole());
 

@@ -28,20 +28,25 @@ public class RegistrationServlet extends HttpServlet {
             req.setAttribute("status", "invalidLogin");
             dispatcher = req.getRequestDispatcher("registration.jsp");
             dispatcher.forward(req, resp);
+            return;
         }
         if (!Pattern.matches(InputPatterns.password.getPattern(), password)) {
             req.setAttribute("status", "invalidPassword");
             dispatcher = req.getRequestDispatcher("registration.jsp");
             dispatcher.forward(req, resp);
-        } else if (!password.equals(rePassword)) {
+            return;
+        }
+        if (!password.equals(rePassword)) {
             req.setAttribute("status", "invalidReenteredPassword");
             dispatcher = req.getRequestDispatcher("registration.jsp");
             dispatcher.forward(req, resp);
+            return;
         }
         if (!Pattern.matches(InputPatterns.email.getPattern(), email)) {
             req.setAttribute("status", "invalidEmail");
             dispatcher = req.getRequestDispatcher("registration.jsp");
             dispatcher.forward(req, resp);
+            return;
         }
 
         @SuppressWarnings("unchecked")

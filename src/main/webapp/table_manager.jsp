@@ -1,9 +1,9 @@
-<%@ page import="com.company.model.User" %><%--
+<%--
   Created by IntelliJ IDEA.
-  User: andrew
-  Date: 29.05.2022
-  Time: 20:30
-  To change this template use File | Settings | File Templates.
+User: andrew
+Date: 29.05.2022
+Time: 20:30
+To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -12,7 +12,7 @@
 <html>
 <head>
 
-    <title>All applications</title>
+    <title>table_manager</title>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <link rel="stylesheet"
@@ -41,8 +41,8 @@
     </div>
 
     <%-- Table from FOREACH cycle --%>
-    <table id="trafficTable" class="table table-hover" style="user-select: none;">
-        <thead>
+    <table id="trafficTable" class="table table-hover table-striped" style="user-select: none;" width="100%">
+        <thead style="text-align: center;">
         <tr>
             <th scope="col" style="width:50px;">Номер замовлення</th>
             <th scope="col" style="width:50px;">Номер замовника</th>
@@ -65,8 +65,8 @@
                 <td>${item.routeFrom} - ${item.routeTo}</td>
                 <td>${item.distance}</td>
                 <td>${item.cargo}</td>
-                <td>${item.pricePerKm}</td>
                 <td>${item.totalPrice}</td>
+                <td>${item.pricePerKm}</td>
                 <td>${item.status}</td>
             </tr>
 
@@ -76,21 +76,24 @@
                  aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
-                        <form action="table" method="post"> <%----%>
+                        <form action="updateTraffic" method="post"> <%-- FORM --%>
                             <div class="modal-header" style="text-align: center">
                                 <h5 class="modal-title" id="exampleModalLabel">
-                                    Номер замовлення: <strong>${item.id}</strong></h5>
-                                <button type="reset" class="btn-close" data-bs-dismiss="modal"
+                                    Номер замовлення:
+                                    <input name="t_id" type="text" disabled value="${item.id}" style="border: none; width: 90px; text-align: center;">
+                                </h5>
+                                <button type="reset" class="btn-close" data-bs-dismiss="modal" style="margin-right: 1px;"
                                         aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
-                                        Номер замовника:
-                                        <input type="text" name="clientId" value="${item.clientId}" disabled style="width: 70px; border: none; text-align: center;">
+                                        Номер замовника: ${item.clientId}
+                                            <%--<input type="text" name="clientId" value="${item.clientId}" disabled style="width: 70px; border: none; text-align: center;">--%>
                                             <%--<strong> ( <button type="submit" style="border: none; background: none; text-decoration: underline;">
                                                 профіль
-                                            </button> ) </strong>--%> <%-- TODO implement logic: check out client's profile --%>
+                                            </button> ) </strong>--%>
+                                            <%-- TODO implement logic: check out client's profile --%>
                                     </li>
                                     <li class="list-group-item">
                                         Дата замовлення: <strong>${item.date}</strong>
@@ -109,10 +112,6 @@
                                     </li>
                                     <li class="list-group-item">
                                         Тариф: <strong>${item.pricePerKm}</strong> грн/км
-                                        <c:if test="${item.status.equals('PENDING')}">
-                                            <input type="number" name="set-price" step="0.10"
-                                                   min="${item.pricePerKm}" value="${item.pricePerKm}">
-                                        </c:if>
                                     </li>
                                     <li class="list-group-item">
                                         Статус: <strong>${item.status}</strong>
@@ -127,21 +126,30 @@
                                     </li>
                                 </ul>
                             </div>
-                            <input type="hidden" name="id" value="${item.id}">
-                            <input type="hidden" name="default-price"
+
+                                <%--Hidden--%>
+                            <input type="hidden" name="default-id"
+                                   value="${item.id}">
+                            <input type="hidden" name="default-clientId"
+                                   value="${item.clientId}">
+                            <input type="hidden" name="default-date"
                                    value="${item.date}">
-                            <input type="hidden" name="default-email"
+                            <input type="hidden" name="default-routeFrom"
                                    value="${item.routeFrom}">
-                            <input type="hidden" name="default-payment-status"
+                            <input type="hidden" name="default-routeTo"
                                    value="${item.routeTo}">
-                            <input type="hidden" name="default-progress"
+                            <input type="hidden" name="default-distance"
                                    value="${item.distance}">
-                            <input type="hidden" name="default-progress"
+                            <input type="hidden" name="default-cargo"
                                    value="${item.cargo}">
-                            <input type="hidden" name="default-progress"
+                            <input type="hidden" name="default-totalPrice"
                                    value="${item.totalPrice}">
-                            <input type="hidden" name="default-progress"
+                            <input type="hidden" name="default-pricePerKm"
                                    value="${item.pricePerKm}">
+                            <input type="hidden" name="default-status"
+                                   value="${item.status}">
+                                <%--Hidden--%>
+
                             <button type="submit" class="btn btn-primary" style="margin: 0 15px 15px;">
                                 Зберегти
                             </button>

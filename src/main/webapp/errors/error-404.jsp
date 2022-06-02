@@ -5,8 +5,7 @@
 
 <html>
 <style>
-    <jsp:directive.include file="/WEB-INF/css/bootstrap.min.css"/>
-    <jsp:directive.include file="/WEB-INF/css/errors.css"/>
+    <jsp:directive.include file="/css/errors.css"/>
 </style>
 
 <head>

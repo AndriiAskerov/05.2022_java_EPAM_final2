@@ -1,8 +1,10 @@
 package com.company.dao;
 
 import com.company.connection.HikariCPDataSource;
+import com.company.model.Role;
 import com.company.model.Traffic;
 import com.company.model.TrafficStatus;
+import javassist.convert.TransformFieldAccess;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.List;
 
 public class TrafficDao implements Dao {
 
+    private static final  String SQL_SET_ENCODING = "SET NAMES utf8";
     private static final String SQL_ADD_TRAFFIC = "INSERT INTO testindian.traffic (" +
             "date, " +
             "route_from, " +
@@ -22,7 +25,9 @@ public class TrafficDao implements Dao {
             "status) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_GET_ALL_TRAFFIC = "SELECT * FROM traffic";
-    private static final String SQL_GET_TRAFFIC_BY_ID = "SELECT * FROM testIndian.users WHERE login=(?) AND password=(?)";
+    private static final String SQL_GET_ALL_TRAFFIC_EXCEPT_PENDING = "SELECT * FROM traffic WHERE status NOT IN (?)";
+    private static final String SQL_GET_TRAFFIC_BY_ID = "SELECT * FROM traffic WHERE id=(?)";
+    private static final String SQL_GET_TRAFFIC_BY_CLIENT_ID = "SELECT * FROM traffic WHERE client_id=(?)";
     private static final String SQL_UPDATE_TRAFFIC = "UPDATE traffic SET " +
             "date=(?), " +
             "route_from=(?), " +
@@ -43,9 +48,14 @@ public class TrafficDao implements Dao {
 
         Connection connection = null;
         PreparedStatement pStatement = null;
+        Statement statement = null;
         try {
             connection = HikariCPDataSource.getConnection();
             pStatement = connection.prepareStatement(SQL_ADD_TRAFFIC);
+
+            // set the utf8 encoding:
+            statement = connection.createStatement();
+            statement.execute(SQL_SET_ENCODING);
 
             pStatement.setDate(1, traffic.getDate());
             pStatement.setString(2, traffic.getRouteFrom());
@@ -56,6 +66,7 @@ public class TrafficDao implements Dao {
             pStatement.setDouble(7, traffic.getTotalPrice());
             pStatement.setDouble(8, traffic.getClientId());
             pStatement.setString(9, traffic.getStatus().name());
+
 
             pStatement.execute();
             flag = true; // traffic added successfully
@@ -93,7 +104,7 @@ public class TrafficDao implements Dao {
 
     @Override
     public Object findEntityById(Object id) {
-        Traffic movie = new Traffic();
+        Traffic traffic = new Traffic();
 
         Connection connection = null;
         PreparedStatement pStatement = null;
@@ -103,7 +114,7 @@ public class TrafficDao implements Dao {
             pStatement.setInt(1, (Integer) id);
 
             ResultSet result = pStatement.executeQuery();
-            movie = getTrafficListFromResult(result).remove(0);
+            traffic = getTrafficListFromResult(result).remove(0);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -111,7 +122,7 @@ public class TrafficDao implements Dao {
             close(pStatement);
             close(connection);
         }
-        return movie;
+        return traffic;
     }
 
     @Override
@@ -142,7 +153,7 @@ public class TrafficDao implements Dao {
             pStatement.setDouble(8, newTraffic.getClientId());
             pStatement.setString(9, newTraffic.getStatus().name());
             pStatement.setInt(10, newTraffic.getId());
-            pStatement.executeQuery();
+            pStatement.execute();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -176,6 +187,50 @@ public class TrafficDao implements Dao {
             close(connection);
         }
         return flag;
+    }
+
+    public List findEntityListByClientId(Object id) {
+        List<Traffic> output = new ArrayList<>();
+
+        Connection connection = null;
+        PreparedStatement pStatement = null;
+        try {
+            connection = HikariCPDataSource.getConnection();
+            pStatement = connection.prepareStatement(SQL_GET_TRAFFIC_BY_CLIENT_ID);
+            pStatement.setInt(1, (Integer) id);
+
+            ResultSet result = pStatement.executeQuery();
+            output = getTrafficListFromResult(result);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(pStatement);
+            close(connection);
+        }
+        return output;
+    }
+
+    public List<Traffic> findAllExceptPending() {
+        List<Traffic> output = new ArrayList<>();
+
+        Connection connection = null;
+        PreparedStatement pStatement = null;
+        try {
+            connection = HikariCPDataSource.getConnection();
+            pStatement = connection.prepareStatement(SQL_GET_ALL_TRAFFIC_EXCEPT_PENDING);
+
+            pStatement.setString(1, TrafficStatus.PENDING.name());
+            ResultSet result = pStatement.executeQuery();
+            output = getTrafficListFromResult(result);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(pStatement);
+            close(connection);
+        }
+        return output;
     }
 
     /* additional method */

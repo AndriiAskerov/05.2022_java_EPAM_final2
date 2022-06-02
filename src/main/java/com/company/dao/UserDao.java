@@ -12,6 +12,7 @@ public class UserDao implements Dao {
 
     private static final String SQL_ADD_USER = "INSERT INTO users (login, password, email, role) VALUES (?, ?, ?, ?)";
     private static final String SQL_GET_USER_BY_LOGIN_PAIR = "SELECT * FROM users WHERE login=(?) AND password=(?)";
+    private static final String SQL_GET_USERS_BY_ROLE = "SELECT * FROM users WHERE role=(?)";
     private static final String SQL_GET_USER_BY_ID = "SELECT * FROM users WHERE id=(?)";
 
     @Override
@@ -107,7 +108,7 @@ public class UserDao implements Dao {
             pStatement.setString(2, password);
             ResultSet resultSet = pStatement.executeQuery();
 
-            if (getListOfUsersFromResult(resultSet).size() != 0) {
+            if (getUserListFromResult(resultSet).size() != 0) {
                 flag = true; // user was found
             }
 
@@ -137,6 +138,7 @@ public class UserDao implements Dao {
             resultSet.next();
             // user was found => init him
             user = new User().newBuilder()
+                    .setId(resultSet.getInt("id"))
                     .setLogin(resultSet.getString("login"))
                     .setPassword(resultSet.getString("password"))
                     .setEmail(resultSet.getString("email"))
@@ -154,11 +156,35 @@ public class UserDao implements Dao {
         return user;
     }
 
-    private List<User> getListOfUsersFromResult(ResultSet resultSet) throws SQLException {
+    public List getUsersByRole(Role role) {
+        List<User> output = new ArrayList<>();
+
+        Connection connection = null;
+        PreparedStatement pStatement = null;
+        try {
+            connection = HikariCPDataSource.getConnection();
+            pStatement = connection.prepareStatement(SQL_GET_USERS_BY_ROLE);
+
+            pStatement.setString(1, role.name());
+            ResultSet resultSet = pStatement.executeQuery();
+            output = getUserListFromResult(resultSet);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(pStatement);
+            close(connection);
+        }
+
+        return output;
+    }
+
+    private List<User> getUserListFromResult(ResultSet resultSet) throws SQLException {
         List<User> userList = new ArrayList<>();
         while (resultSet.next()) {
             // user was found => init him;
             userList.add(new User().newBuilder()
+                    .setId(resultSet.getInt("id"))
                     .setLogin(resultSet.getString("login"))
                     .setPassword(resultSet.getString("password"))
                     .setEmail(resultSet.getString("email"))
